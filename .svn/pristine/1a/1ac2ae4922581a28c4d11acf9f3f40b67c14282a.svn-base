@@ -1,0 +1,22 @@
+
+package mereni;
+
+import java.time.LocalDateTime;
+
+/**
+ *
+ * @author Tomáš Vondra
+ */
+public abstract class Mereni {
+    
+    protected final int idSenzor;
+    protected final TypSenzoruEnum typSenzoru;
+    protected final LocalDateTime casMereni;
+
+    public Mereni(int idSenzor, TypSenzoruEnum typSenzoru, LocalDateTime casMereni) {
+        this.idSenzor = idSenzor;
+        this.typSenzoru = typSenzoru;
+        this.casMereni = casMereni;
+    }
+
+}

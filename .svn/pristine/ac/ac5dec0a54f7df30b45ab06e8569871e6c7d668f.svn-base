@@ -1,0 +1,10 @@
+
+package mereni.generator;
+
+/**
+ *
+ * @author Tomáš Vondra
+ */
+public class GeneratorSenzoru {
+
+}

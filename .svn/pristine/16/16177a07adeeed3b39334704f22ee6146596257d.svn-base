@@ -1,0 +1,1107 @@
+package kolekce;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import static org.junit.Assert.*;
+
+/**
+ * <h2>!!!!!Upozorneni!!!!!</h2>
+ * <p>Tento test obsahuje komentare typu <b>TODO</b>, proto nejdrive
+ * provedte tyto instrukce, ktere zobrazite kliknutim na polozku menu
+ * IDE Netbeans <b>Window</b> > <b>Action Items</b>. V tomto pripade se jedna
+ * o provedeni implementace metody {@link Iterator#remove() }.</p>
+ * @author Tomas Marny
+ */
+/**
+ * <p>Dekuji za precteni upozorneni.</p>
+ * <h2>!!!!!Upozorneni!!!!!</h2>
+ * <p>Tento test neni oficialni od pane inzenyra Simerdy, protoze nemusi klast
+ * duraz na poradi vystavenych vyjimek podle zmineneho cviciciho. Berte ho
+ * jako inspiraci k vytvoreni vlastniho testu.</p>
+ * <p>Dekuji za precteni upozorneni.</p>
+ * @author Tomas Marny
+ */
+public class AbstrDoubleListStreamUnsupportedTest {
+    
+    private static int counter = 1;
+    
+    private String methodName() {
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[2];
+        return e.getMethodName();
+    }
+    
+    private void printTestMethodName(String testMethodName) {
+        System.out.println("test" + (counter < 10 ? "000" : (counter < 100 ? "00" : counter < 1000 ? "0" : "")) + counter++ + "_" + testMethodName);
+    }
+    
+    private final TestClass T1 = new TestClass(1);
+    private final TestClass T2 = new TestClass(2);
+    private final TestClass T3 = new TestClass(3);
+    private final TestClass T4 = new TestClass(4);
+    private final TestClass T5 = new TestClass(5);
+    private final TestClass T6 = new TestClass(6);
+    private final TestClass T7 = new TestClass(7);
+    private final TestClass T8 = new TestClass(8);
+    private final TestClass T_NULL = null;
+    private static AbstrDoubleList<TestClass> list;
+    
+    public AbstrDoubleListStreamUnsupportedTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+        list = new AbstrDoubleList<>();
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+        list = null;
+    }
+    
+    @Before
+    public void setUp() {
+        list = new AbstrDoubleList<>();
+    }
+    
+    @After
+    public void tearDown() {
+        list = null;
+    }
+    
+    //================== Testy jednotlivých metod ==============================
+    
+    @Test
+    public void testUnitJePrazdny() {
+        printTestMethodName(methodName());
+        assertTrue(list.jePrazdny());
+    }
+    
+    @Test
+    public void testUnitNeniPrazdny() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        assertFalse(list.jePrazdny());
+    }
+    
+    @Test
+    public void testUnitMohutnost01() {
+        printTestMethodName(methodName());
+        assertEquals(0, list.getMohutnost());
+    }
+    
+    @Test
+    public void testUnitMohutnost02() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        assertEquals(1, list.getMohutnost());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testUnitVlozPrvni01() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T_NULL);
+        fail();
+    }
+    
+    @Test
+    public void testUnitVlozPrvni02() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+    }
+    
+    @Test
+    public void testUnitVlozPrvni03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        assertEquals(T2, list.zpristupniPrvni());
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void testUnitVlozPosledni01() {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T_NULL);
+        fail();
+    }
+    
+    @Test
+    public void testUnitVlozPosledni02() {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+    }
+    
+    @Test
+    public void testUnitVlozPosledni03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        assertEquals(T2, list.zpristupniPosledni());
+    }
+    
+    @Test(expected = Exception.class)
+    public void testUnitVlozPredchudce01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPredchudce(T_NULL);
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitVlozPredchudce02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPredchudce(T1);
+        fail();
+    }
+    
+    @Test
+    public void testUnitVlozPredchudce03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPosledni();
+        list.vlozPredchudce(T2);
+    }
+    
+    @Test
+    public void testUnitVlozPredchudce04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.zpristupniPosledni();
+        list.vlozPredchudce(T3);
+    }
+    
+    @Test(expected = Exception.class)
+    public void testUnitVlozNaslednika01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozNaslednika(T_NULL);
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitVlozNaslednika02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozNaslednika(T1);
+        fail();
+    }
+    
+    @Test
+    public void testUnitVlozNaslednika03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPrvni();
+        list.vlozNaslednika(T2);
+        assertEquals(T2, list.zpristupniNaslednika());
+    }
+    
+    @Test
+    public void testUnitVlozNaslednika04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.zpristupniPrvni();
+        list.vlozNaslednika(T3);
+        assertEquals(T3, list.zpristupniNaslednika());
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitZpristupniAktualni01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.zpristupniAktualni();
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitZpristupniAktualni02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniAktualni();
+        fail();
+    }
+    
+    @Test
+    public void testUnitZpristupniAktualni03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        assertEquals(T1, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testUnitZpristupniAktualni04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPosledni();
+        assertEquals(T1, list.zpristupniAktualni());
+    }
+    
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitZpristupniPrvni01() {
+        printTestMethodName(methodName());
+        list.zpristupniPrvni();
+        fail();
+    }
+    
+    @Test
+    public void testUnitZpristupniPrvni02() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        assertEquals(T1, list.zpristupniPrvni());
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitZpristupniPosledni01() {
+        printTestMethodName(methodName());
+        list.zpristupniPosledni();
+        fail();
+    }
+    
+    @Test
+    public void testUnitZpristupniPosledni02() {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        assertEquals(T1, list.zpristupniPosledni());
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitZpristupniPredchudce01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.zpristupniPredchudce();
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitZpristupniPredchudce02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPredchudce();
+        fail();
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitZpristupniPredchudce03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.zpristupniPredchudce();
+        fail();
+    }
+    
+    @Test
+    public void testUnitZpristupniPredchudce04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.zpristupniPosledni();
+        assertEquals(T2, list.zpristupniPredchudce());
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitZpristupniNaslednika01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.zpristupniNaslednika();
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitZpristupniNaslednika02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniNaslednika();
+        fail();
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitZpristupniNaslednika03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPosledni();
+        list.zpristupniNaslednika();
+        fail();
+    }
+    
+    @Test
+    public void testUnitZpristupniNaslednika04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.zpristupniPrvni();
+        assertEquals(T2, list.zpristupniNaslednika());
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitIterator01() throws KolekceException {
+        printTestMethodName(methodName());
+        Iterator<TestClass> it = list.iterator();
+        it.next();
+        fail();
+    }
+    
+    @Test
+    public void testUnitIterator02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        Iterator<TestClass> it = list.iterator();
+        TestClass[] expecteds = {T1};
+        checkDataByIterator(expecteds);
+    }
+    
+    /* TODO zakomentuj nasledujici tri testovaci pripady, pokud iterator
+    * tve datove struktury nema implementovanou metodu "remove()"
+    */
+    
+    
+    @Test
+    public void testUnitIteratorRemoveSupported03() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPosledni(T2);
+        Iterator<TestClass> iterator = list.iterator();
+        iterator.next();
+        iterator.remove();
+        TestClass[] expecteds = {T2};
+        checkDataByIterator(expecteds);
+    }
+    
+    /* TODO odkomentuj nasledujici testovaci pripad, pokud iterator
+    * tve datove struktury nema implementovanou metodu "remove()"
+    */
+//    @Test(expected = UnsupportedOperationException.class)
+//    public void testUnitIteratorRemoveUnsupported() {
+//        printTestMethodName(methodName());
+//        Iterator<TestClass> iterator = list.iterator();
+//        iterator.remove();
+//        fail();
+//    }
+    
+    @Test
+    public void testUnitZrus() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.zrus();
+        assertTrue(list.jePrazdny());
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitOdeberPrvni01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.odeberPrvni();
+        fail();
+    }
+    
+    @Test
+    public void testUnitOdeberPrvni02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        assertEquals(T1, list.odeberPrvni());
+        assertTrue(list.jePrazdny());
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitOdeberPosledni01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.odeberPosledni();
+        fail();
+    }
+    
+    @Test
+    public void testUnitOdeberPosledni02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        assertEquals(T1, list.odeberPosledni());
+        assertTrue(list.jePrazdny());
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitOdeberAktualni01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.odeberAktualni();
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitOdeberAktualni02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.odeberAktualni();
+        fail();
+    }
+    
+    @Test
+    public void testUnitOdeberAktualni03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        assertEquals(T1, list.odeberAktualni());
+        assertTrue(list.jePrazdny());
+    }
+    
+    @Test
+    public void testUnitOdeberAktualni04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPosledni();
+        assertEquals(T1, list.odeberAktualni());
+        assertTrue(list.jePrazdny());
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitOdeberPredchudce01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.odeberPredchudce();
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitOdeberPredchudce02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.odeberPredchudce();
+        fail();
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitOdeberPredchudce03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.odeberPredchudce();
+        fail();
+    }
+    
+    @Test
+    public void testUnitOdeberPredchudce04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.zpristupniPosledni();
+        assertEquals(T2, list.odeberPredchudce());
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitOdeberNaslednika01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.odeberNaslednika();
+        fail();
+    }
+    
+    @Test(expected = KolekceException.class)
+    public void testUnitOdeberNaslednika02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.odeberNaslednika();
+        fail();
+    }
+    
+    @Test(expected = NoSuchElementException.class)
+    public void testUnitOdeberNaslednika03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPosledni();
+        list.odeberNaslednika();
+        fail();
+    }
+    
+    @Test
+    public void testUnitOdeberNaslednika04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.zpristupniPrvni();
+        assertEquals(T2, list.odeberNaslednika());
+    }
+    
+//================== Testy sequencí ============================================
+    
+    /**
+     * ZpristupniPrvniVloz2xNaslednika
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.vlozNaslednika(T2);
+        list.vlozNaslednika(T3);
+        TestClass[] expecteds = {T1, T3, T2};
+        assertArrayEquals(expecteds, list.stream().toArray());
+    }
+    
+    /**
+     * ZpristupniPrvniVloz2xPredchudce
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.vlozPredchudce(T2);
+        list.vlozPredchudce(T3);
+        TestClass[] expected = {T2, T3, T1};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    /**
+     * ZpristupniPrvniVlozPosledniZpristupniNaslednikaVlozPredchudce
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.vlozNaslednika(T2);
+        list.zpristupniNaslednika();
+        list.vlozPredchudce(T3);
+        TestClass[] expected = {T1, T3, T2};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    /**
+     * VlozZpristupniPrvniVloz2xNaslednikaZpristupniNaslednikaVlozPredchudce
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.vlozNaslednika(T2);
+        list.vlozNaslednika(T3);
+        list.zpristupniNaslednika();
+        list.vlozPredchudce(T4);
+        TestClass[] expected = {T1, T4, T3, T2};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    /**
+     * ZpristupniPosledniVloz2xPredchudce
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz05() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPosledni();
+        list.vlozPredchudce(T2);
+        list.vlozPredchudce(T3);
+        TestClass[] expecteds = {T2, T3, T1};
+        assertArrayEquals(expecteds, list.stream().toArray());
+    }
+    
+    /**
+     * ZpristupniPosledniVloz2xNaslednika
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz06() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPosledni();
+        list.vlozNaslednika(T2);
+        list.vlozNaslednika(T3);
+        TestClass[] expected = {T1, T3, T2};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    /**
+     * ZpristupniPosledniVlozPrvniZpristupniPredchudceVlozNaslednika
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz07() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPosledni();
+        list.vlozPredchudce(T2);
+        list.zpristupniPredchudce();
+        list.vlozNaslednika(T3);
+        TestClass[] expected = {T2, T3, T1};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    /**
+     * VlozZpristupniPosledniVloz2xPredchudceZpristupniPredchudceVlozNaslednika
+     * @throws KolekceException 
+     */
+    @Test
+    public void testSequenceVloz08() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.zpristupniPosledni();
+        list.vlozPredchudce(T2);
+        list.vlozPredchudce(T3);
+        list.zpristupniPredchudce();
+        list.vlozNaslednika(T4);
+        TestClass[] expected = {T2, T3, T4, T1};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    @Test
+    public void testSequenceVloz09() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPrvni(T6);
+        TestClass[] expected = {T6, T5, T4, T3, T2, T1};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    @Test
+    public void testSequenceVloz10() {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPosledni(T6);
+        TestClass[] expected = {T1, T2, T3, T4, T5, T6};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    @Test
+    public void testSequenceVloz11() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPosledni(T6);
+        list.vlozPosledni(T7);
+        TestClass[] expected = {T5, T4, T3, T2, T1, T6, T7};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    @Test
+    public void testSequenceVloz12() {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPrvni(T6);
+        list.vlozPrvni(T7);
+        TestClass[] expected = {T7, T6, T1, T2, T3, T4, T5};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    @Test
+    public void testSequenceVloz13() {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPosledni(T6);
+        list.vlozPosledni(T7);
+        TestClass[] expected = {T5, T3, T2, T1, T4, T6, T7};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    @Test
+    public void testSequenceVloz14() {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPrvni(T6);
+        list.vlozPrvni(T7);
+        TestClass[] expected = {T7, T6, T4, T1, T2, T3, T5};
+        assertArrayEquals(expected, list.stream().toArray());
+    }
+    
+    @Test
+    public void testSequenceZpristupni01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPrvni(T6);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        assertEquals(T4, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPrvni(T6);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        assertEquals(T3, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPosledni(T6);
+        list.vlozPosledni(T7);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        assertEquals(T2, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPosledni(T6);
+        list.vlozPosledni(T7);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        assertEquals(T1, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni05() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPosledni(T6);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        assertEquals(T4, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni06() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPosledni(T6);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        assertEquals(T3, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni07() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPrvni(T6);
+        list.vlozPrvni(T7);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        assertEquals(T2, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni08() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPrvni(T6);
+        list.vlozPrvni(T7);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        assertEquals(T1, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceZpristupni09() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.vlozNaslednika(T2);
+        list.vlozNaslednika(T3);
+        list.vlozNaslednika(T4);
+        list.zpristupniNaslednika();
+        list.vlozNaslednika(T5);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.vlozNaslednika(T6);
+        list.vlozPredchudce(T7);
+        list.vlozPredchudce(T8);
+        list.zpristupniPredchudce();
+        assertEquals(T8, list.zpristupniAktualni());
+    }
+    
+    @Test
+    public void testSequenceOdeber01() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPrvni(T6);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        TestClass[] expecteds = {T6, T5, T3, T2, T1};
+        assertEquals(T4, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber02() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPrvni(T6);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        TestClass[] expecteds = {T6, T5, T4, T2, T1};
+        assertEquals(T3, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber03() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPosledni(T6);
+        list.vlozPosledni(T7);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        TestClass[] expecteds = {T5, T4, T3, T1, T6, T7};
+        assertEquals(T2, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber04() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.vlozPrvni(T2);
+        list.vlozPrvni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPrvni(T5);
+        list.vlozPosledni(T6);
+        list.vlozPosledni(T7);
+        list.zpristupniPrvni();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        TestClass[] expecteds = {T5, T3, T2, T4, T6, T7};
+        assertEquals(T1, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber05() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPosledni(T6);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        TestClass[] expecteds = {T1, T2, T3, T5, T6};
+        assertEquals(T4, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber06() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPosledni(T6);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        TestClass[] expecteds = {T1, T2, T4, T5, T6};
+        assertEquals(T3, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber07() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPosledni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPrvni(T6);
+        list.vlozPrvni(T7);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        TestClass[] expecteds = {T7, T6, T1, T3, T4, T5};
+        assertEquals(T2, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber08() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPosledni(T1);
+        list.vlozPosledni(T2);
+        list.vlozPosledni(T3);
+        list.vlozPrvni(T4);
+        list.vlozPosledni(T5);
+        list.vlozPrvni(T6);
+        list.vlozPrvni(T7);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        list.zpristupniNaslednika();
+        list.zpristupniNaslednika();
+        list.zpristupniPredchudce();
+        list.zpristupniPredchudce();
+        TestClass[] expecteds = {T7, T6, T4, T2, T3, T5};
+        assertEquals(T1, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    @Test
+    public void testSequenceOdeber09() throws KolekceException {
+        printTestMethodName(methodName());
+        list.vlozPrvni(T1);
+        list.zpristupniPrvni();
+        list.vlozNaslednika(T2);
+        list.vlozNaslednika(T3);
+        list.vlozNaslednika(T4);
+        list.zpristupniNaslednika();
+        list.vlozNaslednika(T5);
+        list.zpristupniPosledni();
+        list.zpristupniPredchudce();
+        list.vlozNaslednika(T6);
+        list.vlozPredchudce(T7);
+        list.vlozPredchudce(T8);
+        list.zpristupniPredchudce();
+        TestClass[] expecteds = {T1, T4, T5, T7, T3, T6, T2};
+        assertEquals(T8, list.odeberAktualni());
+        checkDataByIterator(expecteds);
+    }
+    
+    private void checkDataByIterator(TestClass[] expecteds) {
+        int i = 0;
+        Iterator<TestClass> iterator = list.iterator();
+        while(iterator.hasNext()) {
+            assertEquals(expecteds[i++], iterator.next());
+        }
+        assertEquals(expecteds.length, list.getMohutnost());
+    }
+    
+}
+
+//created by MV
+//edited by TM

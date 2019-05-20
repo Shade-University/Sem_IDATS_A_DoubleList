@@ -1,0 +1,104 @@
+package mereni;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import kolekce.AbstrDoubleList;
+import kolekce.DoubleList;
+import kolekce.KolekceException;
+
+/**
+ *
+ * @author Tomáš Vondra
+ */
+public class SpravceMereni implements Iterable<Mereni> {
+
+    private final DoubleList<Mereni> mereniList;
+
+    public SpravceMereni() {
+        mereniList = new AbstrDoubleList<>();
+    }
+
+    public void vlozMereni(Mereni mereni, PoziceEnum pozice) throws KolekceException {
+        switch (pozice) {
+            case PRVNI:
+                mereniList.vlozPrvni(mereni);
+                break;
+            case POSLEDNI:
+                mereniList.vlozPosledni(mereni);
+                break;
+            case PREDCHUDCE:
+                mereniList.vlozPredchudce(mereni);
+                break;
+            case NASLEDNIK:
+                mereniList.vlozNaslednika(mereni);
+                break;
+            default:
+                throw new AssertionError();
+        }
+
+    }
+
+    Mereni zpristupniMereni(PoziceEnum pozice) throws NoSuchElementException, KolekceException {
+
+        Mereni output = null;
+        switch (pozice) {
+            case PRVNI:
+                output = mereniList.zpristupniPrvni();
+                break;
+            case POSLEDNI:
+                output = mereniList.zpristupniPosledni();
+                break;
+            case PREDCHUDCE:
+                output = mereniList.zpristupniPredchudce();
+                break;
+            case NASLEDNIK:
+                output = mereniList.zpristupniNaslednika();
+                break;
+            default:
+                throw new AssertionError();
+        }
+        return output;
+    }
+
+    Mereni odeberMereni(PoziceEnum pozice) throws KolekceException {
+        Mereni output = null;
+        switch (pozice) {
+            case PRVNI:
+                output = mereniList.odeberPrvni();
+                break;
+            case POSLEDNI:
+                output = mereniList.odeberPosledni();
+                break;
+            case PREDCHUDCE:
+                output = mereniList.odeberPredchudce();
+                break;
+            case NASLEDNIK:
+                output = mereniList.odeberNaslednika();
+                break;
+            default:
+                throw new AssertionError();
+        }
+        return output;
+    }
+
+    public DoubleList<Mereni> mereniDen(int idSenzoru, LocalDate datum) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public double maxSpotreba(int idSenzoru, LocalDateTime datumOd,
+            LocalDateTime datumDo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void zrus() {
+        mereniList.zrus();
+    }
+
+    @Override
+    public Iterator<Mereni> iterator() {
+        return mereniList.iterator();
+    }
+
+}

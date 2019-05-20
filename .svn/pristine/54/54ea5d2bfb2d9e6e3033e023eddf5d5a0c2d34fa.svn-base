@@ -1,0 +1,247 @@
+package gui;
+
+import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import kolekce.DoubleList;
+import kolekce.KolekceException;
+import mereni.Mereni;
+import mereni.MereniElektrika;
+import mereni.MereniGenerator;
+import mereni.MereniVoda;
+import mereni.PoziceEnum;
+import mereni.SpravceMereni;
+import mereni.TypSenzoruEnum;
+
+/**
+ *
+ * @author user
+ */
+public class SpravceMereniMainGui extends Application {
+
+    private ListView<Mereni> listViewMereni;
+    private SpravceMereni mereni;
+
+    @Override
+    public void start(Stage primaryStage) {
+        mereni = new SpravceMereni();
+        listViewMereni = createListView(700, 350);
+
+        HBox right = new HBox(5, listViewMereni, vytvorPohybTlacitka());
+        VBox left = vytvorSpravuTlacitka();
+
+        BorderPane root = new BorderPane();
+        root.paddingProperty().set(new Insets(5));
+        root.setRight(right);
+        root.setCenter(left); //Main UI
+
+        Scene scene = new Scene(root, 1200, 700);
+
+        primaryStage.setTitle("Správce měření");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    private void showDialog(String title, String context, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setContentText(context);
+        alert.setHeaderText("");
+        alert.showAndWait(); //Pomocná metoda na tvorbu dialogů
+    }
+
+    private ListView<Mereni> createListView(double width, double height) {
+        ListView<Mereni> temp = new ListView<>();
+
+        temp.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        temp.setPrefWidth(width);
+        temp.setPrefHeight(height);
+
+        return temp; //vytvoření listview
+    }
+
+    private VBox vytvorPohybTlacitka() {
+        VBox temp = new VBox(3);
+        temp.getChildren().addAll(
+                //Zpřístupní daný prvek, poté deselectne a zaselectuje daný prvek
+                createButton("První", () -> {
+                    try {
+                        Mereni m = mereni.zpristupniMereni(PoziceEnum.PRVNI);
+                        listViewMereni.getSelectionModel().clearSelection();
+                        listViewMereni.getSelectionModel().select(m);
+                    } catch (NoSuchElementException | KolekceException ex) {
+                        showDialog("Error", "List je prázdný", Alert.AlertType.ERROR);
+                    }
+                }),
+                createButton("Předchozí", () -> {
+                    Mereni m;
+                    try {
+                        m = mereni.zpristupniMereni(PoziceEnum.PREDCHUDCE);
+                        listViewMereni.getSelectionModel().clearSelection();
+                        listViewMereni.getSelectionModel().select(m);
+                    } catch (NoSuchElementException | KolekceException ex) {
+                        Logger.getLogger(SpravceMereniMainGui.class.getName()).log(Level.SEVERE, null, ex);
+                        showDialog("Error", "Error", Alert.AlertType.ERROR);
+                    }
+
+                }),
+                createButton("Další", () -> {
+                    Mereni m;
+                    try {
+                        m = mereni.zpristupniMereni(PoziceEnum.NASLEDNIK);
+                        listViewMereni.getSelectionModel().clearSelection();
+                        listViewMereni.getSelectionModel().select(m);
+                    } catch (NoSuchElementException | KolekceException ex) {
+                        showDialog("Error", "Error", Alert.AlertType.ERROR);
+                        Logger.getLogger(SpravceMereniMainGui.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }),
+                createButton("Poslední", () -> {
+                    try {
+                        Mereni m = mereni.zpristupniMereni(PoziceEnum.POSLEDNI);
+                        listViewMereni.getSelectionModel().clearSelection();
+                        listViewMereni.getSelectionModel().select(m);
+                    } catch (NoSuchElementException | KolekceException ex) {
+                        showDialog("Error", "List je prázdný", Alert.AlertType.ERROR);
+                    }
+                }),
+                createButton("Odstraň", () -> {
+                    try {
+                        Mereni m = mereni.odeberMereni(PoziceEnum.AKTUALNI);
+                        listViewMereni.getItems().remove(m);
+                        listViewMereni.getSelectionModel().clearSelection();
+                        listViewMereni.getSelectionModel().selectFirst();
+                    } catch (KolekceException | NoSuchElementException ex) {
+                        showDialog("Error", "Nenastaven aktuální prvek", Alert.AlertType.ERROR);
+                        Logger.getLogger(SpravceMereniMainGui.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                })
+        );
+
+        return temp;
+    }
+
+    private VBox vytvorSpravuTlacitka() {
+        VBox temp = new VBox(5);
+        temp.setPadding(new Insets(10));
+
+        HBox ulozNactiHbox = new HBox(5,
+                createButton("Ulož", () -> {
+                }),
+                createButton("Načti", () -> {
+                }));
+        ulozNactiHbox.setAlignment(Pos.CENTER);
+
+        HBox generujVlozHbox = new HBox(5,
+                createButton("Generuj 3dny", () -> {
+                    LocalDateTime now = LocalDateTime.now();
+                    TypSenzoruEnum typ = new Random().nextInt(2) == 1 //Random typ
+                            ? TypSenzoruEnum.ELEKTRIKA
+                            : TypSenzoruEnum.VODA;
+
+                    Iterator<Mereni> mereniIterator = MereniGenerator.generuj(
+                            now, now.plusDays(3), typ, 1); //TODO ID senzoru změna, popř + 3 dny, opravdu vracet iterator ?
+
+                    while (mereniIterator.hasNext()) {
+                        Mereni mereni1 = mereniIterator.next();
+                        try {
+                            mereni.vlozMereni(mereni1, PoziceEnum.POSLEDNI);
+                            listViewMereni.getItems().add(mereni1);
+                        } catch (KolekceException ex) {
+                        }                       
+                    }
+                }),
+                createButton("Vlož", () -> {
+                    new VlozMereniDialog().showAndWait()
+                            .ifPresent((response) -> {
+                                Mereni m; //Vytvoří měření podle vráceného typu
+                                if (response.getTyp() == TypSenzoruEnum.VODA) {
+                                    m = new MereniVoda(response.getSpotreba(),
+                                            response.getIdSenzoru(),
+                                            response.getCasMereni());
+                                } else {
+                                    m = new MereniElektrika(response.getSpotreba(),
+                                            response.getSpotreba() + 10,
+                                            response.getIdSenzoru(),
+                                            response.getCasMereni());
+                                }
+                                
+                                try {
+                                    mereni.vlozMereni(m, PoziceEnum.POSLEDNI);
+                                    listViewMereni.getItems().add(m);
+                                } catch (KolekceException ex) {
+                                    Logger.getLogger(SpravceMereniMainGui.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            });
+                }));
+        generujVlozHbox.setAlignment(Pos.CENTER);
+
+        temp.getChildren().addAll(
+                generujVlozHbox,
+                createButton("Smaž vše", () -> {
+                    mereni.zrus();
+                    listViewMereni.getItems().clear();
+                }),
+                createButton("Zobraz maximální spotřebu", () -> {
+                    new MaxSpotrebaDialog().showAndWait()
+                            .ifPresent((response) -> {
+                                double max = mereni.maxSpotreba(response.getIdSenzor(),
+                                        response.getOdDatum(), response.getDoDatum());
+                                showDialog("Max", "Max měření: " + max, AlertType.INFORMATION); //Získá max a vypíše do dialogu
+                                
+                            });
+
+                }),
+                createButton("Zobraz měření ze dne", () -> {
+                    new ZobrazMereniZeDneDialog().showAndWait()
+                            .ifPresent((response) -> {
+                                listViewMereni.getSelectionModel().clearSelection();
+                                DoubleList<Mereni> collection
+                                        = mereni.mereniDen(response.getKey(),
+                                                response.getValue());
+                                collection.forEach((item) ->
+                                        listViewMereni.getSelectionModel().select(item)); //Zaselectuje vrácené měření
+                            });
+                }),
+                ulozNactiHbox
+        );
+
+        return temp;
+    }
+
+    private Button createButton(String text, Runnable action) {
+        Button temp = new Button(); //Pomocná na vytvoření tlačítek
+        temp.setMaxWidth(Double.MAX_VALUE);
+        temp.setText(text);
+        temp.setOnAction((e) -> action.run());
+        temp.setPrefWidth(100);
+
+        return temp;
+    }
+
+}

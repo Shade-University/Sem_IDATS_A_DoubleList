@@ -1,0 +1,61 @@
+package gui;
+
+import java.time.LocalDate;
+import javafx.application.Platform;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.util.Pair;
+
+/**
+ *
+ * @author Tomáš Vondra
+ */
+public class ZobrazMereniZeDneDialog extends Dialog<Pair<Integer, LocalDate>> {
+
+    private TextField txtId;
+
+    public ZobrazMereniZeDneDialog() {
+        this.setTitle("Měření ze dne");
+        this.setHeaderText("");
+        this.setContentText("Zadejte den: ");
+
+        DialogPane dialogPane = this.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Label idSenzoru = new Label("Id senzoru: ");
+        txtId = new TextField("0");
+
+        Label denLabel = new Label("Den: ");
+        DatePicker picker = new DatePicker();
+        picker.setValue(LocalDate.now());
+
+        dialogPane.setContent(new HBox(5, idSenzoru, txtId,
+                denLabel, picker));
+
+        Platform.runLater(txtId::requestFocus);
+        this.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                if (validate()) { //Vrátí int(id) a localdate. Byl jsem líný tvořit vlastní třídu na to
+                    return new Pair<>(Integer.parseInt(txtId.getText()), picker.getValue());
+                }
+            }
+            return null;
+        });
+    }
+
+    private boolean validate() {
+        try {
+            Integer.parseInt(txtId.getText());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+    }
+
+}

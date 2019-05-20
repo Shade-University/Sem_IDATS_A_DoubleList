@@ -1,0 +1,16 @@
+package idats_a_vondra;
+
+/**
+ *
+ * @author user
+ */
+public class IDATS_A_Vondra {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+    }
+    
+}

@@ -1,0 +1,10 @@
+
+package mereni.senzor;
+
+/**
+ *
+ * @author Tomáš Vondra
+ */
+public class Elektromer {
+
+}

@@ -1,0 +1,316 @@
+package kolekce;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+/**
+ *
+ * @author Tomáš Vondra
+ * @param <E>
+ */
+public class Seznam<E> implements DoubleList<E> {
+
+    private Prvek prvni;
+    private Prvek posledni;
+    private Prvek aktualni;
+
+    private int velikost;
+
+    private class Prvek {
+
+        Prvek dalsi;
+        Prvek predchozi;
+        E data;
+
+        public Prvek(E data) {
+            this(null, null, data);
+        }
+
+        public Prvek(Prvek dalsi, Prvek predchozi, E data) {
+            this.dalsi = dalsi;
+            this.data = data;
+            this.predchozi = predchozi;
+        }
+    }
+
+    @Override
+    public void zrus() {
+        prvni = null;
+        posledni = null;
+        aktualni = null;
+        velikost = 0;
+    }
+
+    @Override
+    public boolean jePrazdny() {
+        //return velikost == 0;
+        return prvni == null;
+    }
+
+    @Override
+    public int getMohutnost() {
+        return velikost;
+    }
+
+    @Override
+    public void vlozPrvni(E data) throws NullPointerException {
+        if (data == null) {
+            throw new NullPointerException("Null data");
+        }
+
+        Prvek prvek = new Prvek(prvni, null, data);
+
+        if (prvni != null) {
+            prvni.predchozi = prvek;
+        }
+        prvni = prvek;
+        if (posledni == null) {
+            posledni = prvek;
+        }
+        velikost++;
+    }
+
+    @Override
+    public void vlozPosledni(E data) throws NullPointerException {
+        if (data == null) {
+            throw new NullPointerException("Null data");
+        }
+
+        Prvek prvek = new Prvek(null, posledni, data);
+        if (posledni != null) {
+            posledni.dalsi = prvek;
+        }
+        posledni = prvek;
+        if (prvni == null) {
+            prvni = prvek;
+        }
+        velikost++;
+    }
+
+    @Override
+    public void vlozNaslednika(E data) throws NullPointerException, KolekceException {
+        if (aktualni == null) {
+            throw new KolekceException("Nenastaven aktualni prvek");
+        }
+        if (data == null) {
+            throw new NullPointerException("Null data");
+        }
+
+        Prvek prvek = new Prvek(aktualni.dalsi, aktualni, data);
+        aktualni.dalsi = prvek;
+
+        if (aktualni == posledni) {
+            posledni = prvek;
+        }
+        velikost++;
+    }
+
+    @Override
+    public void vlozPredchudce(E data) throws KolekceException, NullPointerException {
+        if (aktualni == null) {
+            throw new KolekceException("Nenastaven aktualni prvek");
+        }
+        if (data == null) {
+            throw new NullPointerException("Null data");
+        }
+
+        Prvek prvek = new Prvek(aktualni, aktualni.predchozi, data);
+        aktualni.predchozi = prvek;
+
+        if (aktualni == prvni) {
+            prvni = prvek;
+        }
+        velikost++;
+    }
+
+    @Override
+    public E zpristupniAktualni() throws NoSuchElementException, KolekceException {
+        if (velikost == 0) {
+            throw new NoSuchElementException();
+        }
+        if (aktualni == null) {
+            throw new KolekceException("Nenastaven aktuální prvek");
+        }
+        return aktualni.data;
+    }
+
+    @Override
+    public E zpristupniPrvni() throws NoSuchElementException {
+        if (prvni == null) {
+            throw new NoSuchElementException();
+        }
+        aktualni = prvni;
+        return aktualni.data;
+    }
+
+    @Override
+    public E zpristupniPosledni() throws NoSuchElementException {
+        if (posledni == null) {
+            throw new NoSuchElementException();
+        }
+        aktualni = posledni;
+        return aktualni.data;
+    }
+
+    @Override
+    public E zpristupniNaslednika() throws NoSuchElementException, KolekceException {
+        if (aktualni == null) {
+            throw new KolekceException("Nenastaven aktuální prvek");
+        }
+        if (aktualni.dalsi == null) {
+            throw new NoSuchElementException();
+        }
+        aktualni = aktualni.dalsi;
+        return aktualni.data;
+    }
+
+    @Override
+    public E zpristupniPredchudce() throws NoSuchElementException, KolekceException {
+        if (aktualni == null) {
+            throw new KolekceException("Nenastaven aktuální prvek");
+        }
+        if (aktualni.predchozi == null) {
+            throw new NoSuchElementException();
+        }
+        aktualni = aktualni.predchozi;
+        return aktualni.data;
+    }
+
+    @Override
+    public E odeberAktualni() throws KolekceException, NoSuchElementException {
+        if (velikost == 0) {
+            throw new NoSuchElementException();
+        }
+        if (aktualni == null) {
+            throw new KolekceException("Nenastaven aktuální prvek");
+        }
+
+        Prvek prvek = aktualni;
+        if (aktualni == prvni) {
+            aktualni = aktualni.dalsi;
+        } else {
+            aktualni = prvni;
+        }
+        if (aktualni != null) {
+            aktualni.predchozi = prvek.predchozi;
+        }
+        velikost--;
+        return prvek.data;
+    }
+
+    @Override
+    public E odeberPrvni() throws KolekceException {
+        if (velikost == 0) {
+            throw new KolekceException("Prázdný seznam");
+        }
+        Prvek prvek = prvni;
+        prvni = prvni.dalsi;
+        if (prvni != null) {
+            prvni.predchozi = null;
+        }
+        if (prvek == aktualni) {
+            aktualni = prvni;
+        }
+        velikost--;
+        return prvek.data;
+    }
+
+    @Override
+    public E odeberPosledni() throws KolekceException {
+        if (velikost == 0) {
+            throw new KolekceException("Prázdný seznam");
+        }
+        Prvek prvek = posledni;
+        posledni = posledni.predchozi;
+        if (posledni != null) {
+            posledni.dalsi = null;
+        }
+        if (prvek == aktualni) {
+            aktualni = posledni;
+        }
+        velikost--;
+        return prvek.data;
+    }
+
+    @Override
+    public E odeberNaslednika() throws KolekceException, NoSuchElementException {
+        if (velikost == 0) {
+            throw new NoSuchElementException();
+        }
+        if (aktualni == null) {
+            throw new KolekceException("Není nastaven aktuální prvek");
+        }
+        if (aktualni.dalsi == null) {
+            throw new NoSuchElementException();
+        }
+        Prvek prvek = aktualni.dalsi;
+        aktualni.dalsi = aktualni.dalsi.dalsi;
+        if (aktualni.dalsi != null) {
+            aktualni.predchozi = aktualni;
+        }
+        velikost--;
+        return prvek.data;
+    }
+
+    @Override
+    public E odeberPredchudce() throws KolekceException, NoSuchElementException {
+        if (velikost == 0) {
+            throw new NoSuchElementException();
+        }
+        if (aktualni == null) {
+            throw new KolekceException("Není nastaven aktuální prvek");
+        }
+        if (aktualni.predchozi == null) {
+            throw new NoSuchElementException();
+        }
+        Prvek prvek = aktualni.predchozi;
+        aktualni.predchozi = aktualni.predchozi.predchozi;
+        if (aktualni.predchozi != null) {
+            aktualni.dalsi = aktualni;
+        }
+        velikost--;
+        return prvek.data;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator() {
+
+            private Prvek prvek = prvni;
+            private Prvek predchozi = null;
+
+            @Override
+            public boolean hasNext() {
+                return prvek != null;
+            }
+
+            @Override
+            public Object next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                E data = prvek.data;
+                predchozi = prvek;
+                prvek = prvek.dalsi;
+                return data;
+            }
+
+            @Override
+            public void remove() {
+                if (predchozi != null) {
+                    if (prvek == null) {
+                        predchozi = null;
+                        velikost--;
+                        return;
+                    }
+                    Prvek temp = predchozi;
+                    predchozi = prvek;
+                    predchozi.predchozi = temp.predchozi;
+                    velikost--;
+                }
+
+            }
+        };
+    }
+
+}
